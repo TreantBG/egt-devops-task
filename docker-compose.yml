@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  egt-web:
+    image: egt-web:latest 
+    build: ./web
+    depends_on:
+      - egt-api
+    ports:
+      - 3000:3000
+    environment: 
+      API_HOST: "http://egt-api:8080"
+    networks:
+      - spring-boot-mysql-network
+
+  egt-api:
+    image: egt-api:latest
+    build: ./api
+    depends_on:
+      - mysql-service
+    ports: 
+      - 8080:8080
+    networks:
+      - spring-boot-mysql-network
+
+  mysql-service:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'springboot_mysql_example'
+      MYSQL_USER: 'newuser'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - 3306:3306
+    networks:
+      - spring-boot-mysql-network
+
+networks:
+  spring-boot-mysql-network:
+    driver: bridge
